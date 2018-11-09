@@ -78,7 +78,6 @@ RUN pip install biopython
 
 # CPC2 (modified)
 ADD CPC2-beta /evolinc_docker/CPC2-beta
-RUN wget -qO- http://cpc2.cbi.pku.edu.cn/data/CPC2-beta.tar.gz | tar xvf -
 WORKDIR /evolinc_docker/CPC2-beta/libs/libsvm/
 RUN tar xvf libsvm-3.22.tar.gz
 WORKDIR libsvm-3.22
@@ -99,7 +98,7 @@ RUN chmod +x /evolinc_docker/evolinc-part-I.sh && cp /evolinc_docker/evolinc-par
 WORKDIR /
 
 # Scripts for OSG
-COPY upload-files wrapper $BINPATH
+ADD upload-files wrapper /usr/bin/
 
 ENV PATH /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/:$PATH
 ENV PATH /evolinc_docker/TransDecoder-2.0.1/:$PATH
