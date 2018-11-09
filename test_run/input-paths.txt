@@ -1,0 +1,6 @@
+/iplant/home/upendra_35/osg-evolinci/Sample_TSS_data.gff
+/iplant/home/upendra_35/osg-evolinci/Sample_cuffcompare_out.gtf
+/iplant/home/upendra_35/osg-evolinci/Sample_known_lncRNAs.gff
+/iplant/home/upendra_35/osg-evolinci/TAIR10_chr1.fasta
+/iplant/home/upendra_35/osg-evolinci/TAIR10_chr1_genes.gff
+/iplant/home/upendra_35/osg-evolinci/TE_RNA_transcripts.fa

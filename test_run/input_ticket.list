@@ -1,0 +1,7 @@
+# application/vnd.de.path-list+csv; version=1
+8017c6d1c969494791cf059714d547,/iplant/home/upendra_35/osg-evolinci/Sample_TSS_data.gff
+b6ee89d33d7f40f6a2b2a6d4d080f4,/iplant/home/upendra_35/osg-evolinci/Sample_cuffcompare_out.gtf
+982de8b22cd6439f96d05806c5a7b8,/iplant/home/upendra_35/osg-evolinci/Sample_known_lncRNAs.gff
+0f87535bec584d2d806b72b46ad3d7,/iplant/home/upendra_35/osg-evolinci/TAIR10_chr1.fasta
+9e475aedbd6d4d758082884c492b91,/iplant/home/upendra_35/osg-evolinci/TAIR10_chr1_genes.gff
+7b67a1bfc5774bfcb15a5c77373369,/iplant/home/upendra_35/osg-evolinci/TE_RNA_transcripts.fa
