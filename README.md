@@ -25,18 +25,21 @@ Optional input data
 3. Transcription start site coordinates (BED)
 
 # Availablility
+
 ## OSG-EVOLINC-I in CyVerse's DE
 
 The OSG-EVOLINC-I-v1.7.4 app is currently integrated in CyVerse’s Discovery Environment (DE) and is free to use by researchers. Register for a free account at [CyVerse](https://user.cyverse.org). The complete tutorial is available at this location [CyVerse wiki](https://wiki.cyverse.org/wiki/display/DEapps/OSG-EVOLINCI+v1.7.4). CyVerse's DE is a free and easy to use GUI that simplifies many aspects of running bioinformatics analyses. If you do not currently have access to a high performance computing cluster, consider taking advantange of the DE. You can submit thousands of jobs using the OSG-EVOLINC-I v1.7.4 app and they will run on OSG instead of on the DE.
 
-## OSG-RMTA on OSG
+## OSG-EVOLINC-I on OSG
 
-The OSG-EVOLINC-I-v2.1 Docker image app is currently available on the OSG and is free to use by researchers. In order to run OSG-RMTA on OSG, you first need to have an account with OSG. Register for a free account at [osg-connect](http://osgconnect.net/). After you register, you need to add your keys because OSG no longer allows password access. You can find more information [here](https://support.opensciencegrid.org/support/solutions/articles/12000027675-generate-ssh-key-pair-and-add-the-public-key-to-your-account). 
+The OSG-EVOLINC-I-v1.7.4 Docker image app is currently available on the OSG and is free to use by researchers. In order to run OSG-RMTA on OSG, you first need to have an account with OSG. Register for a free account at [osg-connect](http://osgconnect.net/). After you register, you need to add your keys because OSG no longer allows password access. You can find more information [here](https://support.opensciencegrid.org/support/solutions/articles/12000027675-generate-ssh-key-pair-and-add-the-public-key-to-your-account). 
 
-The complete tutorial for running OSG-EVOLINC-I on the OSG is available in [here](https://hackmd.io/s/rJjrqyAAQ).
+The complete tutorial for running OSG-EVOLINC-I on the OSG is available in [here](https://hackmd.io/s/HJDaVO1QN).
 
 # Issues
+
 If you experience any issues with running OSG-Evolinc-I (DE app or source code or Docker image), please open an issue on this github repo. Alternatively post your query or future requests in this [google group](https://groups.google.com/forum/#!forum/evolinc)
 
 # Copyright free
+
 The sources in this [Github](https://github.com/Evolinc/OSG-Evolinc-I) repository, are copyright free. Thus you are allowed to use these sources in which ever way you like. Here is the full [MIT](https://choosealicense.com/licenses/mit/#) license.
