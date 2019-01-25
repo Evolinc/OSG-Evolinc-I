@@ -4,7 +4,7 @@
 
 usage() {
       echo ""
-      echo "Usage : sh $0 -c cuffcompare -g genome -r gff -o output -n threads [-b TE_RNA] [-t CAGE_RNA] [-x Known_lincRNA]"
+      echo "Usage : sh $0 -c cuffcompare -g genome -u user_gff -o output -n threads [-b TE_RNA] [-t CAGE_RNA] [-x Known_lincRNA]"
       echo ""
 
 cat <<'EOF'
@@ -13,7 +13,9 @@ cat <<'EOF'
 
   -g </path/to/reference genome file>
 
-  -r </path/to/reference annotation file>
+  -u </path/to/user reference annotation file>
+
+  -r </path/to/reference annotation file> # This option is specific to CyVerse Discovery Environment
 
   -o </path/to/output file>
 
@@ -31,7 +33,7 @@ EOF
     exit 0
 }
 
-while getopts ":b:c:g:hr:t:x:o:n:" opt; do
+while getopts ":b:c:g:hr:t:x:o:n:u:" opt; do
   case $opt in
     b)
      blastfile=$OPTARG
@@ -45,6 +47,9 @@ while getopts ":b:c:g:hr:t:x:o:n:" opt; do
       ;;    
     g)
      referencegenome=$OPTARG
+      ;;
+    u)
+     user_referencegff=$OPTARG # This option is specific to CyVerse Discovery Environment
       ;;
     r)
      referencegff=$OPTARG
@@ -86,14 +91,23 @@ fi
 # Create a directory to move all the output files
 mkdir $output
 
-# Fix the gff file if they are coming for coge
-grep -v "#" $referencegff |grep -iv "chromosome    " | grep -iv "region    " | grep -iv "scaffold    " > temp && mv temp $referencegff
+# Fix the gff files if they are coming for coge
+#grep -v "#" $referencegff |grep -iv "chromosome    " | grep -iv "region    " | grep -iv "scaffold    " > temp && mv temp $referencegff
+#grep -v "#" $user_referencegff |grep -iv "chromosome    " | grep -iv "region    " | grep -iv "scaffold    " > temp && mv temp $user_referencegff
 
-# Fixing the cuffcompare files 
+function fix_gff() {
+    local gff="$1"
+    if [[ ! -z "$gff" && -e "$gff" ]]; then
+        grep -Pv '^(?:#|(?:\S+\s+){2}(?:chromosome|region|scaffold)\s+)' "$gff" > temp
+        mv temp "$gff"
+    fi
+}
+
+fix_gff "$referencegff"
+fix_gff "$user_referencegff"
+
+# Fixing the cuffcompare files as well
 sed 's~^~>~g' $comparefile | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > comparefile.gtf
-
-
-# Fixing the genome file
 sed 's~^>0*~>~g' $referencegenome | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' > referencegenome.fa
  
 # STEP 1:
@@ -342,8 +356,14 @@ echo "Elapsed time for Step 2 is" $ELAPSED_TIME_2 "seconds" >> ../$output/elapse
 
 # STEP 3:
 START_TIME_3=$SECONDS
-sed 's~^~>~g' $referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > referencegff.gff
-intersectBed -a lincRNA.prefilter.bed -b referencegff.gff -u -s > SOT.genes.all.bed
+if [ ! -z $user_referencegff ];
+then
+    sed 's~^~>~g' ../$user_referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > user_referencegff.gff
+    intersectBed -a lincRNA.prefilter.bed -b user_referencegff.gff -u -s > SOT.genes.all.bed
+else
+    sed 's~^~>~g' $referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > referencegff.gff
+    intersectBed -a lincRNA.prefilter.bed -b referencegff.gff -u -s > SOT.genes.all.bed
+fi
 
 # Get the IDs of the overlapping exons.
 cut -f 10 SOT.genes.all.bed | awk -F " " '{print $2}'| sort | uniq | sed 's~;~~g' > SOT.lincRNA.ids.txt
@@ -368,7 +388,14 @@ echo "Elapsed time for Step 3 is" $ELAPSED_TIME_3 "seconds" >> ../$output/elapse
 # STEP 4:
 START_TIME_4=$SECONDS
 # Identify transcripts that are overlapping in the opposite direction (AOT)
-intersectBed -a lincRNA.noSOT.bed -b referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
+if [ ! -z $user_referencegff ];
+then
+    sed 's~^~>~g' ../$user_referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > user_referencegff.gff
+    intersectBed -a lincRNA.noSOT.bed -b user_referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
+else
+    sed 's~^~>~g' $referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > referencegff.gff
+    intersectBed -a lincRNA.noSOT.bed -b referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
+fi
 
 # Make a list from the above file-These are the exons that overlapped
 cut -f 10 AOT.lincRNA.genes.all.bed | awk -F " " '{print $2}'| sort | uniq | sed 's~;~~g' > AOT.lincRNA.ids.txt
@@ -399,7 +426,12 @@ grep -F -f lncRNA.genes.id ../comparefile.gtf > filtered.lncRNA.gtf
 gff2bed < filtered.lncRNA.gtf > lncRNA.prefilter.bed
 awk 'BEGIN {OFS=FS="\t"} {gsub(/\./,"+",$6)}1' lncRNA.prefilter.bed > temp && mv temp lncRNA.prefilter.bed
 
-intersectBed -a lncRNA.prefilter.bed -b $referencegff -u -s > SOT.lncRNA.genes.all.bed
+if [ ! -z $user_referencegff ];
+then
+    intersectBed -a lncRNA.prefilter.bed -b ../$user_referencegff -u -s > SOT.lncRNA.genes.all.bed
+else   
+    intersectBed -a lncRNA.prefilter.bed -b $referencegff -u -s > SOT.lncRNA.genes.all.bed
+fi
 
 # Get the IDs of the overlapping exons.
 cut -f 10 SOT.lncRNA.genes.all.bed | awk -F " " '{print $2}'| sort | uniq | sed 's~;~~g' > SOT.lncRNA.ids.txt
@@ -419,7 +451,12 @@ grep -A 1 -Ff SOT.lncRNA.all.txt transcripts.all.overlapping.filter.not.genes.fa
 sed -i 's~--~~g' SOT.lncRNA.fa # still has an extra new line
 
 # Identify transcripts that are overlapping in the opposite direction (AOT)
-intersectBed -a lncRNA.noSOT.bed -b $referencegff -u -S > AOT.lncRNA.genes.all.bed
+if [ ! -z $user_referencegff ];
+then
+    intersectBed -a lncRNA.noSOT.bed -b ../$user_referencegff -u -S > AOT.lncRNA.genes.all.bed
+else
+    intersectBed -a lncRNA.noSOT.bed -b $referencegff -u -S > AOT.lncRNA.genes.all.bed
+fi
 
 # Make a list from the above file-These are the exons that overlapped
 cut -f 10 AOT.lncRNA.genes.all.bed | awk -F " " '{print $2}'| sort | uniq | sed 's~;~~g' > AOT.lncRNA.ids.txt

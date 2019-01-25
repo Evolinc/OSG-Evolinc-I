@@ -2,6 +2,8 @@ FROM ubuntu:16.04
 MAINTAINER Upendra Devisetty
 LABEL Description "This Dockerfile is used for OSG-EvolincI"
 
+RUN mkdir /cvmfs /work
+
 RUN apt-get update && apt-get install -y g++ \
 		make \
 		git \
@@ -67,6 +69,7 @@ RUN Rscript -e 'install.packages("getopt", dependencies = TRUE, repos="http://cr
 # Uniprot database
 ADD https://github.com/iPlantCollaborativeOpenSource/docker-builds/releases/download/evolinc-I/uniprot_sprot.dmnd.gz /evolinc_docker/
 RUN gzip -d /evolinc_docker/uniprot_sprot.dmnd.gz
+RUN chmod 777 /evolinc_docker/uniprot_sprot.dmnd
 
 # rFAM database
 ADD https://de.cyverse.org/dl/d/12EF1A2F-B9FC-456D-8CD9-9F87197CACF2/rFAM_sequences.fasta /evolinc_docker/
