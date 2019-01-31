@@ -300,13 +300,13 @@ python /evolinc_docker/extract_sequences-1.py putative_intergenic.genes.not.gene
 ###TE MODULE###
 # Blast the putative intergenic lincRNA fasta file to TE RNA db (if provided)
 if [ ! -z $blastfile ]; then
-     echo "starting TE search"
-	 lastdb -s 1G ../$blastfile.blast.out ../$blastfile &&
-     lastal -E10 -P 0 -f BlastTab+ ../$blastfile.blast.out lincRNA.genes_no_rfam.fa > lincRNA.genes_no_rfam.fa.TEblast.out.temp
-	 grep -v "#" lincRNA.genes_no_rfam.fa.TEblast.out.temp > putative_intergenic.genes.not.genes_no_rfam.fa.TEblast.out
+  echo "starting TE search"
+	lastdb -s 1G ../$blastfile.blast.out ../$blastfile &&
+  lastal -E10 -P 0 -f BlastTab+ ../$blastfile.blast.out lincRNA.genes_no_rfam.fa > lincRNA.genes_no_rfam.fa.TEblast.out.temp
+	grep -v "#" lincRNA.genes_no_rfam.fa.TEblast.out.temp > putative_intergenic.genes.not.genes_no_rfam.fa.TEblast.out
      #blastn -query putative_intergenic.genes.not.genes.fa -db ../$blastfile.blast.out -out putative_intergenic.genes.not.genes.fa.blast.out -outfmt 6 -num_threads $threads # no blast hits here
 else
-    touch putative_intergenic.genes.not.genes_no_rfam.fa.TEblast.out
+  touch putative_intergenic.genes.not.genes_no_rfam.fa.TEblast.out
 	echo "No TEs provided for searching"
 fi
 
@@ -390,11 +390,11 @@ START_TIME_4=$SECONDS
 # Identify transcripts that are overlapping in the opposite direction (AOT)
 if [ ! -z $user_referencegff ];
 then
-    sed 's~^~>~g' ../$user_referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > user_referencegff.gff
-    intersectBed -a lincRNA.noSOT.bed -b user_referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
+  sed 's~^~>~g' ../$user_referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > user_referencegff.gff
+  intersectBed -a lincRNA.noSOT.bed -b user_referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
 else
-    sed 's~^~>~g' $referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > referencegff.gff
-    intersectBed -a lincRNA.noSOT.bed -b referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
+  sed 's~^~>~g' $referencegff | sed 's~^>0*~>~g' | sed 's~^>Chr0*~>~g' | sed 's~^>Scaffold0*~>~g' | sed 's~^>~~g' > referencegff.gff
+  intersectBed -a lincRNA.noSOT.bed -b referencegff.gff -u -S > AOT.lincRNA.genes.all.bed
 fi
 
 # Make a list from the above file-These are the exons that overlapped
@@ -453,9 +453,9 @@ sed -i 's~--~~g' SOT.lncRNA.fa # still has an extra new line
 # Identify transcripts that are overlapping in the opposite direction (AOT)
 if [ ! -z $user_referencegff ];
 then
-    intersectBed -a lncRNA.noSOT.bed -b ../$user_referencegff -u -S > AOT.lncRNA.genes.all.bed
+  intersectBed -a lncRNA.noSOT.bed -b ../$user_referencegff -u -S > AOT.lncRNA.genes.all.bed
 else
-    intersectBed -a lncRNA.noSOT.bed -b $referencegff -u -S > AOT.lncRNA.genes.all.bed
+  intersectBed -a lncRNA.noSOT.bed -b $referencegff -u -S > AOT.lncRNA.genes.all.bed
 fi
 
 # Make a list from the above file-These are the exons that overlapped

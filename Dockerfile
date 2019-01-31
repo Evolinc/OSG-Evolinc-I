@@ -73,6 +73,7 @@ RUN chmod 777 /evolinc_docker/uniprot_sprot.dmnd
 
 # rFAM database
 ADD https://de.cyverse.org/dl/d/12EF1A2F-B9FC-456D-8CD9-9F87197CACF2/rFAM_sequences.fasta /evolinc_docker/
+RUN chmod 755 /evolinc_docker/rFAM_sequences.fasta
 
 # Biopython
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
@@ -103,15 +104,24 @@ WORKDIR /
 # Scripts for OSG
 ADD upload-files wrapper /usr/bin/
 
-ENV PATH /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/:$PATH
-ENV PATH /evolinc_docker/TransDecoder-2.0.1/:$PATH
-ENV PATH /evolinc_docker/ncbi-blast-2.4.0+/bin/:$PATH
-ENV PATH /evolinc_docker/bedtools2-2.25.0/bin/:$PATH
-ENV PATH /evolinc_docker/samtools-bcftools-htslib-1.0_x64-linux/bin/:$PATH
-ENV PATH /evolinc_docker/bin/:$PATH
-ENV PATH /evolinc_docker/CPC2-beta/bin/:$PATH
-ENV PATH /last-926/src/:$PATH
-ENV PATH /evolinc_docker/:$PATH
+# Environment settings
+ENV PERL5LIB /evolinc_docker/TransDecoder-2.0.1/PerlLib
+
+RUN cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cuffcompare $BINPATH && \
+    cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cufflinks $BINPATH && \
+    cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cuffmerge $BINPATH && \
+    cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/gffread $BINPATH && \
+    cp -r /evolinc_docker/TransDecoder-2.0.1/util /usr/bin && \
+    cp /evolinc_docker/TransDecoder-2.0.1/TransDecoder.LongOrfs $BINPATH && \
+    cp /evolinc_docker/bedtools2-2.25.0/bin/bedtools $BINPATH && \
+    cp /evolinc_docker/bedtools2-2.25.0/bin/intersectBed $BINPATH && \
+    cp /evolinc_docker/bedtools2-2.25.0/bin/sortBed $BINPATH && \
+    cp /evolinc_docker/bedtools2-2.25.0/bin/closestBed $BINPATH && \
+    cp /evolinc_docker/samtools-bcftools-htslib-1.0_x64-linux/bin/* $BINPATH && \
+    cp /evolinc_docker/bin/* $BINPATH && \
+    cp /last-926/src/lastal $BINPATH && \
+    cp /last-926/src/lastdb $BINPATH && \
+    cp /evolinc_docker/diamond $BINPATH 
 
 # Entrypoint
 ENTRYPOINT ["evolinc-part-I.sh"]
