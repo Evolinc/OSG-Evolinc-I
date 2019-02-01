@@ -105,13 +105,14 @@ WORKDIR /
 ADD upload-files wrapper /usr/bin/
 
 # Environment settings
-ENV PERL5LIB /evolinc_docker/TransDecoder-2.0.1/PerlLib
+RUN mkdir /usr/bin/PerlLib
 
 RUN cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cuffcompare $BINPATH && \
     cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cufflinks $BINPATH && \
     cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/cuffmerge $BINPATH && \
     cp /evolinc_docker/cufflinks-2.2.1.Linux_x86_64/gffread $BINPATH && \
-    cp -r /evolinc_docker/TransDecoder-2.0.1/util /usr/bin && \
+    cp -r /evolinc_docker/TransDecoder-2.0.1/PerlLib/* $BINPATH/PerlLib && \
+    cp -r /evolinc_docker/TransDecoder-2.0.1/util $BINPATH && \
     cp /evolinc_docker/TransDecoder-2.0.1/TransDecoder.LongOrfs $BINPATH && \
     cp /evolinc_docker/bedtools2-2.25.0/bin/bedtools $BINPATH && \
     cp /evolinc_docker/bedtools2-2.25.0/bin/intersectBed $BINPATH && \
